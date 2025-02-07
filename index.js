@@ -1,15 +1,28 @@
 const express = require('express');
-const { resolve } = require('path');
+const mongoose = require('mongoose');
+const path = require('path');
 
 const app = express();
 const port = 3010;
 
+app.use(express.json());
+
+
+mongoose.connect('mongodb://localhost:27017/marketplace')
+  .then(() => console.log('Connected to MongoDB'))
+  .catch(err => console.error('Error connecting to MongoDB:', err));
+
+
+const authRoutes = require('./routes/route');
+app.use('/api/auth', authRoutes);
+
+
 app.use(express.static('static'));
 
 app.get('/', (req, res) => {
-  res.sendFile(resolve(__dirname, 'pages/index.html'));
+  res.sendFile(path.resolve(__dirname, 'static/index.html'));
 });
 
 app.listen(port, () => {
-  console.log(`Example app listening at http://localhost:${port}`);
+  console.log(`Server running at http://localhost:${port}`);
 });
